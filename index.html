@@ -1,0 +1,1779 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kavanica — Bar & Kava</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:     #0F1012;
+      --bg2:    #14171C;
+      --bg3:    #191D22;
+      --bg4:    #0B0C0F;
+      --cream:  #EDE0BC;
+      --cream2: #D5CA9D;
+      --copper: #CB9B3A;
+      --copper2:#AE822C;
+      --muted:  #7A7365;
+      --border: rgba(237,224,188,0.14);
+      --border-strong: rgba(237,224,188,0.28);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--cream);
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 400;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* Grain texture overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 1;
+    }
+
+    /* Typography */
+    .serif { font-family: 'Playfair Display', Georgia, serif; }
+
+    h1, h2, h3, h4 {
+      font-family: 'Playfair Display', Georgia, serif;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--copper2); border-radius: 2px; }
+
+    /* ─── NAV ─── */
+    #nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 24px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.5s ease, padding 0.4s ease, backdrop-filter 0.5s ease;
+    }
+    #nav.scrolled {
+      background: rgba(15,16,18,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 16px 48px;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--cream);
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(237,224,188,0.7);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .nav-links a:hover { color: var(--cream); }
+    .nav-cta {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--cream);
+      padding: 10px 24px;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .nav-cta:hover { background: var(--copper); color: var(--bg); }
+
+    /* Hamburger */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 24px;
+      height: 1.5px;
+      background: var(--cream);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 99;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      font-weight: 500;
+      color: var(--cream);
+      text-decoration: none;
+      letter-spacing: -0.01em;
+      transition: color 0.2s ease;
+    }
+    .mobile-menu a:hover { color: var(--copper); }
+
+    @media (max-width: 768px) {
+      #nav { padding: 20px 24px; }
+      #nav.scrolled { padding: 14px 24px; }
+      .nav-links, .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+    }
+
+    /* ─── HERO ─── */
+    #hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 120px 48px;
+      overflow: hidden;
+      background: var(--bg4);
+      text-align: center;
+    }
+
+    .hero-image-frame {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+    .hero-image-placeholder {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #17191F 0%, #101114 40%, #090D10 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-image-placeholder::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 80% at 70% 40%, rgba(203,155,58,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 60% at 20% 70%, rgba(237,224,188,0.04) 0%, transparent 50%);
+    }
+    .hero-image-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: rgba(237,224,188,0.2);
+      border: 1px solid rgba(237,224,188,0.08);
+      padding: 14px 28px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-vignette {
+      position: absolute;
+      inset: 0;
+      background-color: rgba(11,12,15,0.42);
+      background-image:
+        linear-gradient(to top, rgba(11,12,15,0.98) 0%, rgba(11,12,15,0.6) 35%, transparent 65%),
+        linear-gradient(to bottom, rgba(11,12,15,0.65) 0%, transparent 30%),
+        radial-gradient(ellipse 80% 60% at 50% 50%, transparent 30%, rgba(11,12,15,0.55) 100%);
+      z-index: 1;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 900px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .hero-eyebrow {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 28px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s forwards;
+    }
+
+    .hero-title {
+      font-size: clamp(68px, 10vw, 140px);
+      font-weight: 700;
+      font-style: italic;
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      color: var(--cream);
+      margin-bottom: 36px;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeUp 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s forwards;
+    }
+    .hero-title em {
+      font-style: normal;
+      color: var(--copper);
+      font-weight: 700;
+    }
+
+    .hero-tagline {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(237,224,188,0.45);
+      margin: 0 auto 16px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.7s forwards;
+    }
+
+    .hero-subtitle {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(26px, 3vw, 42px);
+      font-weight: 400;
+      font-style: italic;
+      letter-spacing: -0.01em;
+      color: rgba(237,224,188,0.75);
+      margin: 0 auto 52px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.8s forwards;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.9s forwards;
+    }
+    .btn-primary {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--cream);
+      padding: 16px 36px;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: background 0.25s ease, color 0.25s ease, transform 0.2s ease;
+    }
+    .btn-primary:hover { background: var(--copper); transform: translateY(-2px); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(237,224,188,0.65);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .btn-ghost::after {
+      content: '→';
+      font-size: 16px;
+      letter-spacing: 0;
+      transition: transform 0.2s ease;
+    }
+    .btn-ghost:hover { color: var(--cream); }
+    .btn-ghost:hover::after { transform: translateX(4px); }
+
+    .hero-scroll-indicator {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 1.2s forwards;
+    }
+    .hero-scroll-indicator span {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: rgba(237,224,188,0.4);
+    }
+    .scroll-line {
+      width: 1px;
+      height: 48px;
+      background: linear-gradient(to bottom, rgba(237,224,188,0.4), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.4; transform: scaleY(1); }
+      50% { opacity: 1; transform: scaleY(1.15); }
+    }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      #hero { padding: 0 24px 64px; }
+      .hero-scroll-indicator { right: 24px; }
+    }
+
+    /* ─── MARQUEE ─── */
+    #marquee {
+      background: var(--copper);
+      padding: 14px 0;
+      overflow: hidden;
+      position: relative;
+    }
+    .marquee-track {
+      display: flex;
+      gap: 0;
+      animation: marqueeScroll 60s linear infinite;
+      width: max-content;
+    }
+    .marquee-item {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--bg);
+      white-space: nowrap;
+      padding: 0 48px;
+    }
+    .marquee-dot {
+      color: rgba(15,16,18,0.4);
+      padding: 0 4px;
+    }
+    @keyframes marqueeScroll {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    /* ─── SECTIONS SHARED ─── */
+    section { position: relative; }
+
+    .section-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 28px;
+      height: 1px;
+      background: var(--copper);
+      flex-shrink: 0;
+    }
+
+    /* ── Scroll Reveal System ── */
+    /* Spring easing: snappy start, silky landing */
+    :root { --spring: cubic-bezier(0.16, 1, 0.3, 1); }
+
+    .reveal,
+    .reveal-left,
+    .reveal-right,
+    .reveal-scale,
+    .reveal-fade {
+      will-change: opacity, transform;
+    }
+
+    /* Fade + rise (default) */
+    .reveal {
+      opacity: 0;
+      transform: translateY(44px);
+      transition: opacity 1.05s var(--spring), transform 1.05s var(--spring);
+    }
+    /* Slide from left */
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-52px);
+      transition: opacity 1.05s var(--spring), transform 1.05s var(--spring);
+    }
+    /* Slide from right */
+    .reveal-right {
+      opacity: 0;
+      transform: translateX(52px);
+      transition: opacity 1.05s var(--spring), transform 1.05s var(--spring);
+    }
+    /* Scale + rise (cards) */
+    .reveal-scale {
+      opacity: 0;
+      transform: scale(0.93) translateY(24px);
+      transition: opacity 0.95s var(--spring), transform 0.95s var(--spring);
+    }
+    /* Pure fade (labels, captions) */
+    .reveal-fade {
+      opacity: 0;
+      transition: opacity 0.85s ease-out;
+    }
+
+    .reveal.visible,
+    .reveal-left.visible,
+    .reveal-right.visible,
+    .reveal-scale.visible,
+    .reveal-fade.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    @media print {
+      .reveal, .reveal-left, .reveal-right, .reveal-scale, .reveal-fade {
+        opacity: 1; transform: none;
+      }
+    }
+
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.22s; }
+    .reveal-delay-3 { transition-delay: 0.36s; }
+    .reveal-delay-4 { transition-delay: 0.52s; }
+    .reveal-delay-5 { transition-delay: 0.70s; }
+
+    /* Image frame placeholder */
+    .img-frame {
+      background: var(--bg3);
+      border: 1px solid var(--border-strong);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .img-frame::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 70% at 50% 50%, rgba(203,155,58,0.07) 0%, transparent 70%);
+    }
+    .img-frame::after {
+      content: '';
+      position: absolute;
+      inset: 12px;
+      border: 1px solid rgba(237,224,188,0.08);
+      pointer-events: none;
+    }
+    .img-frame-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(237,224,188,0.28);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ─── PHOTOS ─── */
+    .img-frame > img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      z-index: 0;
+      transition: transform 0.85s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .img-frame:hover > img { transform: scale(1.04); }
+    .hero-image-placeholder > img,
+    .atmosphere-placeholder > img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+    /* Coffee cup watermark */
+    .hero-coffee-mark {
+      position: absolute;
+      right: 5%;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0.06;
+      color: var(--cream);
+    }
+    /* Decorative bean row */
+    .deco-beans {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-top: 28px;
+      opacity: 0.5;
+      color: var(--copper);
+    }
+
+    /* ─── ABOUT ─── */
+    #about {
+      background: var(--bg2);
+      padding: 120px 48px;
+    }
+    .about-grid {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .about-image {
+      aspect-ratio: 3/4;
+    }
+    .about-text { padding: 40px 0; }
+    .about-heading {
+      font-size: clamp(36px, 4vw, 56px);
+      font-weight: 500;
+      line-height: 1.15;
+      color: var(--cream);
+      margin-bottom: 28px;
+    }
+    .about-heading em {
+      font-style: italic;
+      color: var(--copper);
+    }
+    .about-body {
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.85;
+      color: rgba(237,224,188,0.65);
+      margin-bottom: 20px;
+    }
+    .about-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 52px;
+      padding-top: 40px;
+      border-top: 1px solid var(--border);
+    }
+    .stat-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 36px;
+      font-weight: 500;
+      color: var(--copper);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(237,224,188,0.45);
+    }
+
+    @media (max-width: 900px) {
+      #about { padding: 80px 24px; }
+      .about-grid { grid-template-columns: 1fr; gap: 48px; }
+      .about-image { aspect-ratio: 16/9; }
+    }
+
+    /* ─── MENU ─── */
+    #menu {
+      background: var(--bg);
+      padding: 120px 48px;
+    }
+    .menu-inner { max-width: 1280px; margin: 0 auto; }
+    .menu-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 64px;
+    }
+    .menu-heading {
+      font-size: clamp(36px, 4vw, 52px);
+      font-weight: 500;
+      color: var(--cream);
+    }
+    .menu-heading em { font-style: italic; color: var(--copper); }
+    .menu-subtext {
+      font-size: 13px;
+      font-weight: 300;
+      color: rgba(237,224,188,0.45);
+      max-width: 260px;
+      text-align: right;
+      line-height: 1.6;
+    }
+
+    .menu-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 52px;
+    }
+    .menu-tab {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(237,224,188,0.35);
+      padding: 14px 28px 14px 0;
+      cursor: pointer;
+      position: relative;
+      transition: color 0.2s ease;
+      background: none;
+      border: none;
+    }
+    .menu-tab::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: var(--copper);
+      transform: scaleX(0);
+      transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .menu-tab.active { color: var(--cream); }
+    .menu-tab.active::after { transform: scaleX(1); }
+    .menu-tab:hover { color: rgba(237,224,188,0.7); }
+
+    .menu-panel { display: none; }
+    .menu-panel.active { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+
+    .menu-card {
+      background: var(--bg2);
+      padding: 36px 32px;
+      transition: background 0.25s ease;
+      cursor: default;
+    }
+    .menu-card:hover { background: var(--bg3); }
+    .menu-card-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--cream);
+      margin-bottom: 8px;
+    }
+    .menu-card-desc {
+      font-size: 12px;
+      font-weight: 300;
+      color: rgba(237,224,188,0.45);
+      line-height: 1.65;
+      margin-bottom: 20px;
+    }
+    .menu-card-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--copper);
+    }
+    .menu-card-icon {
+      padding: 14px 0 20px;
+      color: var(--copper);
+      opacity: 0.55;
+    }
+
+    /* Menu card entrance — fires on .active toggle (scroll-in + tab switch) */
+    @keyframes menuCardIn {
+      from { opacity: 0; transform: translateY(26px); }
+      to   { opacity: 1; transform: none; }
+    }
+    .menu-panel.active .menu-card {
+      animation: menuCardIn 0.55s var(--spring) both;
+    }
+    .menu-panel.active .menu-card:nth-child(1) { animation-delay: 0.03s; }
+    .menu-panel.active .menu-card:nth-child(2) { animation-delay: 0.09s; }
+    .menu-panel.active .menu-card:nth-child(3) { animation-delay: 0.16s; }
+    .menu-panel.active .menu-card:nth-child(4) { animation-delay: 0.24s; }
+    .menu-panel.active .menu-card:nth-child(5) { animation-delay: 0.33s; }
+    .menu-panel.active .menu-card:nth-child(6) { animation-delay: 0.43s; }
+
+    @media (max-width: 900px) {
+      #menu { padding: 80px 24px; }
+      .menu-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .menu-subtext { text-align: left; }
+      .menu-panel.active { grid-template-columns: 1fr; }
+    }
+
+    /* ─── ATMOSPHERE ─── */
+    #atmosphere {
+      background: var(--bg4);
+      padding: 0;
+      min-height: 80vh;
+      display: flex;
+      align-items: flex-end;
+      position: relative;
+      overflow: hidden;
+    }
+    .atmosphere-image-wrap {
+      position: absolute;
+      inset: 0;
+    }
+    .atmosphere-image-inner {
+      position: absolute;
+      inset: 0;
+    }
+    .atmosphere-placeholder {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #181A20 0%, #090D10 60%, #080A0D 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .atmosphere-overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to bottom,
+          rgba(11,12,15,0.1) 0%,
+          rgba(11,12,15,0.1) 20%,
+          rgba(11,12,15,0.55) 55%,
+          rgba(11,12,15,0.93) 76%,
+          rgba(11,12,15,1.0) 90%);
+    }
+    .atmosphere-content {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      padding: 80px 48px 100px;
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .atmosphere-title {
+      font-size: clamp(56px, 9vw, 128px);
+      font-weight: 700;
+      font-style: normal;
+      line-height: 1.0;
+      letter-spacing: -0.03em;
+      color: var(--cream);
+      text-transform: uppercase;
+    }
+    .atmosphere-title em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--copper);
+      text-transform: none;
+      letter-spacing: -0.02em;
+    }
+
+    @media (max-width: 768px) {
+      .atmosphere-content { padding: 60px 24px 80px; }
+    }
+
+    /* ─── EVENTS ─── */
+    #events {
+      background: var(--bg2);
+      padding: 120px 48px;
+    }
+    .events-inner { max-width: 1280px; margin: 0 auto; }
+    .events-header { margin-bottom: 64px; }
+    .events-heading {
+      font-size: clamp(36px, 4vw, 52px);
+      font-weight: 500;
+      color: var(--cream);
+      margin-bottom: 16px;
+    }
+    .events-heading em { font-style: italic; color: var(--copper); }
+    .events-subtext {
+      font-size: 14px;
+      font-weight: 300;
+      color: rgba(237,224,188,0.45);
+    }
+
+    .events-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+    .event-card {
+      background: var(--bg3);
+      padding: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .event-card:hover { transform: translateY(-4px); }
+    .event-card-image {
+      aspect-ratio: 4/3;
+    }
+    .event-card-body { padding: 32px; flex: 1; display: flex; flex-direction: column; }
+    .event-date {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 12px;
+    }
+    .event-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--cream);
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+    .event-desc {
+      font-size: 13px;
+      font-weight: 300;
+      color: rgba(237,224,188,0.5);
+      line-height: 1.7;
+      flex: 1;
+      margin-bottom: 24px;
+    }
+    .event-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .event-time {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      color: rgba(237,224,188,0.45);
+    }
+    .event-link {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--copper);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .event-link:hover { color: var(--cream); }
+
+    @media (max-width: 900px) {
+      #events { padding: 80px 24px; }
+      .events-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ─── GALLERY ─── */
+    #gallery {
+      background: var(--bg);
+      padding: 120px 48px;
+    }
+    .gallery-inner { max-width: 1280px; margin: 0 auto; }
+    .gallery-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: end;
+      margin-bottom: 56px;
+    }
+    .gallery-heading {
+      font-size: clamp(36px, 4vw, 52px);
+      font-weight: 500;
+      color: var(--cream);
+    }
+    .gallery-heading em { font-style: italic; color: var(--copper); }
+    .gallery-text {
+      font-size: 14px;
+      font-weight: 300;
+      color: rgba(237,224,188,0.45);
+      line-height: 1.75;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-template-rows: auto;
+      gap: 4px;
+    }
+    .gallery-item { overflow: hidden; }
+    .gallery-item:nth-child(1) { grid-column: span 7; grid-row: span 2; }
+    .gallery-item:nth-child(2) { grid-column: span 5; }
+    .gallery-item:nth-child(3) { grid-column: span 5; }
+    .gallery-item:nth-child(4) { grid-column: span 4; }
+    .gallery-item:nth-child(5) { grid-column: span 4; }
+    .gallery-item:nth-child(6) { grid-column: span 4; }
+
+    .gallery-item .img-frame {
+      width: 100%;
+      height: 100%;
+      min-height: 200px;
+    }
+    .gallery-item:nth-child(1) .img-frame { min-height: 420px; }
+    .gallery-item:nth-child(2) .img-frame,
+    .gallery-item:nth-child(3) .img-frame { min-height: 206px; }
+
+    @media (max-width: 900px) {
+      #gallery { padding: 80px 24px; }
+      .gallery-header { grid-template-columns: 1fr; }
+      .gallery-grid { grid-template-columns: 1fr 1fr; gap: 4px; }
+      .gallery-item { grid-column: auto !important; grid-row: auto !important; }
+      .gallery-item .img-frame { min-height: 180px !important; }
+    }
+
+    /* ─── CONTACT ─── */
+    #contact {
+      background: var(--bg2);
+      padding: 120px 48px 0;
+    }
+    .contact-hours-full {
+      padding: 52px 0 80px;
+      border-top: 1px solid var(--border);
+    }
+    .contact-hours-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+    }
+    .contact-hours-full-title {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--copper);
+    }
+    .hours-strip {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      align-items: center;
+      width: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+    }
+    .hour-strip-item {
+      padding: 32px 48px;
+      text-align: center;
+    }
+    .hour-strip-day {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(237,224,188,0.45);
+      margin-bottom: 10px;
+    }
+    .hour-strip-time {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      font-weight: 500;
+      color: var(--cream);
+      letter-spacing: -0.02em;
+    }
+    .hours-strip-divider {
+      width: 1px;
+      height: 52px;
+      background: var(--border);
+    }
+    @media (max-width: 900px) {
+      .contact-hours-full { padding: 40px 0 60px; }
+      .hours-strip { grid-template-columns: 1fr; }
+      .hours-strip-divider { width: 100%; height: 1px; }
+      .hour-strip-item { padding: 24px 32px; }
+    }
+    .contact-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .contact-heading {
+      font-size: clamp(36px, 4vw, 56px);
+      font-weight: 500;
+      color: var(--cream);
+      margin-bottom: 16px;
+    }
+    .contact-heading em { font-style: italic; color: var(--copper); }
+    .contact-sub {
+      font-size: 14px;
+      font-weight: 300;
+      color: rgba(237,224,188,0.5);
+      line-height: 1.75;
+      margin-bottom: 52px;
+    }
+    .contact-info-block { margin-bottom: 36px; }
+    .contact-info-title {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 10px;
+    }
+    .contact-info-title-lg {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--copper);
+    }
+    .contact-info-text {
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--cream);
+      line-height: 1.7;
+    }
+    .contact-info-text a {
+      color: inherit;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .contact-info-text a:hover { color: var(--copper); }
+
+    .contact-hours {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      padding: 28px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      margin-bottom: 40px;
+    }
+    .hour-day {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: rgba(237,224,188,0.5);
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .hour-time {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--cream);
+      text-align: right;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .contact-hours div:nth-last-child(-n+2) { border-bottom: none; }
+
+    .contact-map {
+      width: 100%;
+      aspect-ratio: 1;
+      margin-bottom: 32px;
+    }
+    .contact-map-inner {
+      width: 100%;
+      height: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .map-icon {
+      width: 32px;
+      height: 32px;
+      opacity: 0.3;
+    }
+    .contact-map-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(237,224,188,0.2);
+    }
+    .contact-reservation {
+      padding: 40px;
+      background: var(--bg4);
+      border: 1px solid var(--border);
+    }
+    .contact-reservation h3 {
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--cream);
+      margin-bottom: 8px;
+    }
+    .contact-reservation p {
+      font-size: 13px;
+      font-weight: 300;
+      color: rgba(237,224,188,0.45);
+      margin-bottom: 24px;
+      line-height: 1.65;
+    }
+
+    @media (max-width: 900px) {
+      #contact { padding: 80px 24px; }
+      .contact-inner { grid-template-columns: 1fr; gap: 52px; }
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--bg4);
+      padding: 60px 48px 40px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    .footer-top {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 48px;
+      padding-bottom: 52px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 32px;
+    }
+    .footer-brand-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--cream);
+      margin-bottom: 12px;
+    }
+    .footer-brand-tagline {
+      font-size: 12px;
+      font-weight: 300;
+      color: rgba(237,224,188,0.4);
+      line-height: 1.7;
+      max-width: 200px;
+    }
+    .footer-col-title {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 20px;
+    }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-links a {
+      font-size: 13px;
+      font-weight: 400;
+      color: rgba(237,224,188,0.5);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .footer-links a:hover { color: var(--cream); }
+    .footer-social {
+      display: flex;
+      gap: 16px;
+      margin-top: 8px;
+    }
+    .footer-social a {
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(237,224,188,0.5);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0;
+      transition: border-color 0.2s ease, color 0.2s ease;
+    }
+    .footer-social a:hover { border-color: var(--cream); color: var(--cream); }
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-copy {
+      font-size: 11px;
+      font-weight: 400;
+      color: rgba(237,224,188,0.25);
+      letter-spacing: 0.04em;
+    }
+    .footer-copper {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      color: rgba(203,155,58,0.4);
+    }
+
+    @media (max-width: 900px) {
+      footer { padding: 52px 24px 32px; }
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 36px; }
+      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+    }
+    @media (max-width: 560px) {
+      .footer-top { grid-template-columns: 1fr; }
+    }
+
+    /* Divider line decoration */
+    .section-divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--border), transparent);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── MOBILE MENU ─── -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#about" onclick="closeMobile()">O nama</a>
+  <a href="#menu" onclick="closeMobile()">Meni</a>
+  <a href="#events" onclick="closeMobile()">Događaji</a>
+  <a href="#gallery" onclick="closeMobile()">Galerija</a>
+  <a href="#contact" onclick="closeMobile()">Kontakt</a>
+</div>
+
+<!-- ─── NAV ─── -->
+<nav id="nav">
+  <a href="#" class="nav-logo">Kavanica</a>
+  <ul class="nav-links">
+    <li><a href="#about">O nama</a></li>
+    <li><a href="#menu">Meni</a></li>
+    <li><a href="#events">Događaji</a></li>
+    <li><a href="#gallery">Galerija</a></li>
+    <li><a href="#contact">Kontakt</a></li>
+  </ul>
+  <a href="#radno-vrijeme" class="nav-cta">Radno Vrijeme</a>
+  <div class="nav-hamburger" id="hamburger" onclick="toggleMobile()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section id="hero">
+  <div class="hero-image-frame">
+    <div class="hero-image-placeholder">
+      <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1920&q=80" alt="Kavanica caffe bar" loading="eager" />
+    </div>
+  </div>
+  <div class="hero-vignette"></div>
+  <div class="hero-coffee-mark">
+    <svg width="300" height="260" viewBox="0 0 200 220" fill="none" stroke="currentColor" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M65 55 Q70 42 65 30 Q60 18 65 6" stroke-width="1.1"/>
+      <path d="M100 50 Q105 37 100 25 Q95 13 100 2" stroke-width="1.1"/>
+      <path d="M135 55 Q140 42 135 30 Q130 18 135 6" stroke-width="1.1"/>
+      <ellipse cx="100" cy="63" rx="62" ry="10"/>
+      <path d="M38 63 L24 170 Q24 180 38 180 L162 180 Q176 180 176 170 L162 63"/>
+      <path d="M162 95 Q194 95 194 132 Q194 168 162 168"/>
+      <ellipse cx="100" cy="186" rx="88" ry="12"/>
+    </svg>
+  </div>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow">Koprivnica</p>
+    <h1 class="hero-title">Kavanica</h1>
+    <p class="hero-subtitle">Više od kave</p>
+    <div class="hero-actions">
+      <a href="#menu" class="btn-primary">Istraži meni</a>
+      <a href="#about" class="btn-ghost">Naša priča</a>
+    </div>
+  </div>
+
+  <div class="hero-scroll-indicator">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- ─── MARQUEE ─── -->
+<div id="marquee" class="reveal-fade" aria-hidden="true">
+  <div class="marquee-track">
+    <!-- duplicated for seamless loop -->
+    <span class="marquee-item">Topla Kava <span class="marquee-dot">◆</span></span>
+    <span class="marquee-item">Koprivnica Centar <span class="marquee-dot">◆</span></span>
+    <span class="marquee-item">Limunada <span class="marquee-dot">◆</span></span>
+    <span class="marquee-item">Čaj <span class="marquee-dot">◆</span></span>
+    <span class="marquee-item">Svježi Sokovi <span class="marquee-dot">◆</span></span>
+    <span class="marquee-item">Domaća Atmosfera <span class="marquee-dot">◆</span></span>
+    <span class="marquee-item">Topla Kava <span class="marquee-dot">◆</span></span>
+    <span class="marquee-item">Koprivnica Centar <span class="marquee-dot">◆</span></span>
+    <span class="marquee-item">Limunada <span class="marquee-dot">◆</span></span>
+    <span class="marquee-item">Čaj <span class="marquee-dot">◆</span></span>
+    <span class="marquee-item">Svježi Sokovi <span class="marquee-dot">◆</span></span>
+    <span class="marquee-item">Domaća Atmosfera <span class="marquee-dot">◆</span></span>
+  </div>
+</div>
+
+<!-- ─── ABOUT ─── -->
+<section id="about">
+  <div class="about-grid">
+    <div class="reveal-left">
+      <div class="about-image img-frame">
+        <img src="https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=800&q=80" alt="Kavanica kava" />
+      </div>
+    </div>
+    <div class="about-text">
+      <h2 class="about-heading reveal reveal-delay-1">
+        O Kavanici
+      </h2>
+      <p class="about-body reveal reveal-delay-2">
+        Kavanica je nastala iz jedne jednostavne ideje — da postoji mjesto u gradu gdje se možeš zaustaviti. Ne samo popiti kavu i otići, nego ostati. Razgovarati. Slušati glazbu. Upoznati nekoga novog.
+      </p>
+      <p class="about-body reveal reveal-delay-3">
+        Svaki detalj — od načina na koji pripremamo espresso do playlisty koja svira petkom navečer — osmišljen je s namjerom. Biramo pažljivo: kavu, ljude, trenutke.
+      </p>
+      <div class="about-stats reveal reveal-delay-4">
+        <div>
+          <div class="stat-number">5+</div>
+          <div class="stat-label">Godina s vama</div>
+        </div>
+        <div>
+          <div class="stat-number">★</div>
+          <div class="stat-label">Uvijek svježe</div>
+        </div>
+        <div>
+          <div class="stat-number">∞</div>
+          <div class="stat-label">Dobrih razgovora</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── MENU ─── -->
+<section id="menu">
+  <div class="menu-inner">
+    <div class="menu-header">
+      <div class="reveal">
+        <p class="section-label reveal-fade" style="margin-bottom:16px">Što nudimo</p>
+        <h2 class="menu-heading">Naš <em>meni</em></h2>
+      </div>
+      <p class="menu-subtext reveal reveal-delay-2"></p>
+    </div>
+
+    <div class="menu-tabs reveal reveal-delay-1">
+      <button class="menu-tab active" onclick="switchTab(this,'kave')">Kave</button>
+      <button class="menu-tab" onclick="switchTab(this,'signature')">Bezalkoholna pića</button>
+      <button class="menu-tab" onclick="switchTab(this,'zalogaji')">Alkoholna pića</button>
+      <button class="menu-tab" onclick="switchTab(this,'kokteli')">Kokteli</button>
+    </div>
+
+    <div class="menu-panel active" id="tab-kave">
+      <div class="menu-card">
+        <div class="menu-card-name">Espresso</div>
+        <div class="menu-card-icon"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h13l-1.3 9H5.3L4 10z"/><path d="M17 12h1.8a2 2 0 0 1 0 4H17"/><ellipse cx="10.5" cy="21" rx="4.5" ry="1.2"/><path d="M8.5 7Q10 5 10.5 7Q11 9 13 7"/></svg></div>
+        <div class="menu-card-price">1.80 €</div>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-name">Cortado</div>
+        <div class="menu-card-icon"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h13l-1.3 9H5.3L4 10z"/><path d="M17 12h1.8a2 2 0 0 1 0 4H17"/><ellipse cx="10.5" cy="21" rx="4.5" ry="1.2"/><path d="M8.5 7Q10 5 10.5 7Q11 9 13 7"/></svg></div>
+        <div class="menu-card-price">2.20 €</div>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-name">Flat White</div>
+        <div class="menu-card-icon"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h13l-1.3 9H5.3L4 10z"/><path d="M17 12h1.8a2 2 0 0 1 0 4H17"/><ellipse cx="10.5" cy="21" rx="4.5" ry="1.2"/><path d="M8.5 7Q10 5 10.5 7Q11 9 13 7"/></svg></div>
+        <div class="menu-card-price">2.80 €</div>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-name">Cappuccino</div>
+        <div class="menu-card-icon"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h13l-1.3 9H5.3L4 10z"/><path d="M17 12h1.8a2 2 0 0 1 0 4H17"/><ellipse cx="10.5" cy="21" rx="4.5" ry="1.2"/><path d="M8.5 7Q10 5 10.5 7Q11 9 13 7"/></svg></div>
+        <div class="menu-card-price">2.50 €</div>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-name">Pour Over</div>
+        <div class="menu-card-icon"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h13l-1.3 9H5.3L4 10z"/><path d="M17 12h1.8a2 2 0 0 1 0 4H17"/><ellipse cx="10.5" cy="21" rx="4.5" ry="1.2"/><path d="M8.5 7Q10 5 10.5 7Q11 9 13 7"/></svg></div>
+        <div class="menu-card-price">4.00 €</div>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-name">Cold Brew</div>
+        <div class="menu-card-icon"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h13l-1.3 9H5.3L4 10z"/><path d="M17 12h1.8a2 2 0 0 1 0 4H17"/><ellipse cx="10.5" cy="21" rx="4.5" ry="1.2"/><path d="M8.5 7Q10 5 10.5 7Q11 9 13 7"/></svg></div>
+        <div class="menu-card-price">3.50 €</div>
+      </div>
+    </div>
+
+    <div class="menu-panel" id="tab-signature">
+      <div class="menu-card">
+        <div class="menu-card-name">Kavanica Noir</div>
+        <div class="menu-card-icon"><svg width="22" height="26" viewBox="0 0 22 26" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h16l-2.5 19H5.5L3 3z"/><line x1="3" y1="7" x2="19" y2="7"/><line x1="15" y1="2" x2="10" y2="14"/></svg></div>
+        <div class="menu-card-price">5.50 €</div>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-name">Copper Milk</div>
+        <div class="menu-card-icon"><svg width="22" height="26" viewBox="0 0 22 26" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h16l-2.5 19H5.5L3 3z"/><line x1="3" y1="7" x2="19" y2="7"/><line x1="15" y1="2" x2="10" y2="14"/></svg></div>
+        <div class="menu-card-price">4.80 €</div>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-name">Forest Tonic</div>
+        <div class="menu-card-icon"><svg width="22" height="26" viewBox="0 0 22 26" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h16l-2.5 19H5.5L3 3z"/><line x1="3" y1="7" x2="19" y2="7"/><line x1="15" y1="2" x2="10" y2="14"/></svg></div>
+        <div class="menu-card-price">5.00 €</div>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-name">Spiced Cortado</div>
+        <div class="menu-card-icon"><svg width="22" height="26" viewBox="0 0 22 26" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h16l-2.5 19H5.5L3 3z"/><line x1="3" y1="7" x2="19" y2="7"/><line x1="15" y1="2" x2="10" y2="14"/></svg></div>
+        <div class="menu-card-price">4.50 €</div>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-name">Midnight Latte</div>
+        <div class="menu-card-icon"><svg width="22" height="26" viewBox="0 0 22 26" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h16l-2.5 19H5.5L3 3z"/><line x1="3" y1="7" x2="19" y2="7"/><line x1="15" y1="2" x2="10" y2="14"/></svg></div>
+        <div class="menu-card-price">5.20 €</div>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-name">Seasonal Special</div>
+        <div class="menu-card-icon"><svg width="22" height="26" viewBox="0 0 22 26" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h16l-2.5 19H5.5L3 3z"/><line x1="3" y1="7" x2="19" y2="7"/><line x1="15" y1="2" x2="10" y2="14"/></svg></div>
+        <div class="menu-card-price">od 4.50 €</div>
+      </div>
+    </div>
+
+    <div class="menu-panel" id="tab-kokteli">
+      <div class="menu-card">
+        <div class="menu-card-name">Espresso Martini</div>
+        <div class="menu-card-icon"><svg width="22" height="26" viewBox="0 0 22 26" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M1 2l10 12 10-12H1z"/><line x1="11" y1="14" x2="11" y2="22"/><line x1="7" y1="22" x2="15" y2="22"/><line x1="15" y1="5" x2="20" y2="1"/></svg></div>
+        <div class="menu-card-price">9.00 €</div>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-name">Kavanica Negroni</div>
+        <div class="menu-card-icon"><svg width="22" height="26" viewBox="0 0 22 26" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M1 2l10 12 10-12H1z"/><line x1="11" y1="14" x2="11" y2="22"/><line x1="7" y1="22" x2="15" y2="22"/><line x1="15" y1="5" x2="20" y2="1"/></svg></div>
+        <div class="menu-card-price">8.50 €</div>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-name">Smoky Mule</div>
+        <div class="menu-card-icon"><svg width="22" height="26" viewBox="0 0 22 26" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M1 2l10 12 10-12H1z"/><line x1="11" y1="14" x2="11" y2="22"/><line x1="7" y1="22" x2="15" y2="22"/><line x1="15" y1="5" x2="20" y2="1"/></svg></div>
+        <div class="menu-card-price">9.50 €</div>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-name">Garden Spritz</div>
+        <div class="menu-card-icon"><svg width="22" height="26" viewBox="0 0 22 26" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M1 2l10 12 10-12H1z"/><line x1="11" y1="14" x2="11" y2="22"/><line x1="7" y1="22" x2="15" y2="22"/><line x1="15" y1="5" x2="20" y2="1"/></svg></div>
+        <div class="menu-card-price">8.00 €</div>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-name">Old Fashioned</div>
+        <div class="menu-card-icon"><svg width="22" height="26" viewBox="0 0 22 26" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M1 2l10 12 10-12H1z"/><line x1="11" y1="14" x2="11" y2="22"/><line x1="7" y1="22" x2="15" y2="22"/><line x1="15" y1="5" x2="20" y2="1"/></svg></div>
+        <div class="menu-card-price">10.00 €</div>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-name">Virgin Forest</div>
+        <div class="menu-card-icon"><svg width="22" height="26" viewBox="0 0 22 26" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M1 2l10 12 10-12H1z"/><line x1="11" y1="14" x2="11" y2="22"/><line x1="7" y1="22" x2="15" y2="22"/><line x1="15" y1="5" x2="20" y2="1"/></svg></div>
+        <div class="menu-card-price">6.50 €</div>
+      </div>
+    </div>
+
+    <div class="menu-panel" id="tab-zalogaji">
+      <div class="menu-card">
+        <div class="menu-card-name">Bruschetta</div>
+        <div class="menu-card-icon"><svg width="22" height="26" viewBox="0 0 22 26" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2h18l-4 12a6 6 0 0 1-10 0L2 2z"/><line x1="11" y1="18" x2="11" y2="24"/><line x1="7" y1="24" x2="15" y2="24"/></svg></div>
+        <div class="menu-card-price">6.00 €</div>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-name">Hummus Plate</div>
+        <div class="menu-card-icon"><svg width="22" height="26" viewBox="0 0 22 26" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2h18l-4 12a6 6 0 0 1-10 0L2 2z"/><line x1="11" y1="18" x2="11" y2="24"/><line x1="7" y1="24" x2="15" y2="24"/></svg></div>
+        <div class="menu-card-price">7.50 €</div>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-name">Cheese Board</div>
+        <div class="menu-card-icon"><svg width="22" height="26" viewBox="0 0 22 26" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2h18l-4 12a6 6 0 0 1-10 0L2 2z"/><line x1="11" y1="18" x2="11" y2="24"/><line x1="7" y1="24" x2="15" y2="24"/></svg></div>
+        <div class="menu-card-price">12.00 €</div>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-name">Avokado Toast</div>
+        <div class="menu-card-icon"><svg width="22" height="26" viewBox="0 0 22 26" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2h18l-4 12a6 6 0 0 1-10 0L2 2z"/><line x1="11" y1="18" x2="11" y2="24"/><line x1="7" y1="24" x2="15" y2="24"/></svg></div>
+        <div class="menu-card-price">7.00 €</div>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-name">Brownie</div>
+        <div class="menu-card-icon"><svg width="22" height="26" viewBox="0 0 22 26" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2h18l-4 12a6 6 0 0 1-10 0L2 2z"/><line x1="11" y1="18" x2="11" y2="24"/><line x1="7" y1="24" x2="15" y2="24"/></svg></div>
+        <div class="menu-card-price">5.50 €</div>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-name">Tart dana</div>
+        <div class="menu-card-icon"><svg width="22" height="26" viewBox="0 0 22 26" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2h18l-4 12a6 6 0 0 1-10 0L2 2z"/><line x1="11" y1="18" x2="11" y2="24"/><line x1="7" y1="24" x2="15" y2="24"/></svg></div>
+        <div class="menu-card-price">od 4.00 €</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── ATMOSPHERE ─── -->
+<section id="atmosphere">
+  <div class="atmosphere-image-wrap">
+    <div class="atmosphere-image-inner">
+      <div class="atmosphere-placeholder">
+        <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1920&q=80" alt="Kavanica atmosfera" />
+      </div>
+      <div class="atmosphere-overlay"></div>
+    </div>
+  </div>
+  <div class="atmosphere-content">
+    <h2 class="atmosphere-title reveal-scale">Kavanica<br><em>Caffe Bar</em></h2>
+  </div>
+</section>
+
+<!-- ─── EVENTS ─── -->
+<section id="events">
+  <div class="events-inner">
+    <div class="events-header">
+      <p class="section-label reveal-fade" style="margin-bottom:16px">Događaji</p>
+      <h2 class="events-heading reveal">Ovaj <em>tjedan</em></h2>
+    </div>
+    <div class="events-grid">
+      <div class="event-card reveal-scale reveal-delay-1">
+        <div class="event-card-image img-frame">
+          <img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=800&q=80" alt="Tamburaši" />
+        </div>
+        <div class="event-card-body">
+          <div class="event-date">Petak, 30. svibnja 2026.</div>
+          <h3 class="event-name">Tamburaši</h3>
+          <p class="event-desc">Živa glazba, dobro raspoloženje i kava uz tamburice. Dođi ranije, mjesta su ograničena.</p>
+          <div class="event-footer">
+            <span class="event-time">20:30 — ponoć</span>
+          </div>
+        </div>
+      </div>
+      <div class="event-card reveal-scale reveal-delay-2">
+        <div class="event-card-image img-frame">
+          <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=800&q=80" alt="DJ večer" />
+        </div>
+        <div class="event-card-body">
+          <div class="event-date">Subota, 31. svibnja 2026.</div>
+          <h3 class="event-name">DJ</h3>
+          <p class="event-desc">Dobar zvuk, dobra atmosfera. Večer uz glazbu i omiljeni napitak u srcu Koprivnice.</p>
+          <div class="event-footer">
+            <span class="event-time">21:00 — 1:00</span>
+          </div>
+        </div>
+      </div>
+      <div class="event-card reveal-scale reveal-delay-3">
+        <div class="event-card-image img-frame">
+          <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=800&q=80" alt="Tamburaši nedjelja" />
+        </div>
+        <div class="event-card-body">
+          <div class="event-date">Nedjelja, 1. lipnja 2026.</div>
+          <h3 class="event-name">Tamburaši</h3>
+          <p class="event-desc">Nedjeljom poslijepodne uz tamburice i kavu. Lagano, domaće, živo.</p>
+          <div class="event-footer">
+            <span class="event-time">17:00 — 20:00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── GALLERY ─── -->
+<section id="gallery">
+  <div class="gallery-inner">
+    <div class="gallery-header">
+      <div class="reveal-left">
+        <p class="section-label reveal-fade" style="margin-bottom:16px">Galerija</p>
+        <h2 class="gallery-heading">Atmosfera<br>u <em>Kavanici</em></h2>
+      </div>
+    </div>
+    <div class="gallery-grid">
+      <div class="gallery-item reveal-scale"><div class="img-frame"><img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1200&q=80" alt="Latte art" /></div></div>
+      <div class="gallery-item reveal-scale reveal-delay-1"><div class="img-frame"><img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=600&q=80" alt="Kava" /></div></div>
+      <div class="gallery-item reveal-scale reveal-delay-2"><div class="img-frame"><img src="https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=600&q=80" alt="Kavanica" /></div></div>
+      <div class="gallery-item reveal-scale reveal-delay-2"><div class="img-frame"><img src="https://images.unsplash.com/photo-1516743619420-154b70a65fea?auto=format&fit=crop&w=600&q=80" alt="Atmosfera" /></div></div>
+      <div class="gallery-item reveal-scale reveal-delay-3"><div class="img-frame"><img src="https://images.unsplash.com/photo-1445116572257-6cd22a4c3f6b?auto=format&fit=crop&w=600&q=80" alt="Interijer" /></div></div>
+      <div class="gallery-item reveal-scale reveal-delay-4"><div class="img-frame"><img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=600&q=80" alt="Kava zrna" /></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CONTACT ─── -->
+<section id="contact">
+  <div class="contact-inner">
+    <div class="contact-left">
+      <p class="section-label reveal-fade" style="margin-bottom:20px">Pronađi nas</p>
+      <h2 class="contact-heading reveal reveal-delay-1">Dođi na<br><em>kavu.</em></h2>
+      <div class="contact-info-block reveal reveal-delay-2">
+        <div class="contact-info-title">Adresa</div>
+        <div class="contact-info-text">Koprivnica, centar<br>HR-48000, Hrvatska</div>
+      </div>
+      <div class="contact-info-block reveal reveal-delay-4">
+        <div class="contact-info-title">Kontakt</div>
+        <div class="contact-info-text">
+          <a href="tel:+38512345678">+385 1 234 5678</a><br>
+          <a href="mailto:info@kavanica.hr">info@kavanica.hr</a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="contact-right reveal-right reveal-delay-2">
+      <div class="contact-map">
+        <div class="contact-map-inner">
+          <svg class="map-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+            <circle cx="12" cy="9" r="2.5"/>
+          </svg>
+          <span class="contact-map-label">slika kavanica — karta</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="contact-hours-full reveal" id="radno-vrijeme">
+    <div class="contact-hours-inner">
+      <div class="contact-hours-full-title">Radno Vrijeme</div>
+      <div class="hours-strip">
+        <div class="hour-strip-item reveal-scale reveal-delay-1">
+          <div class="hour-strip-day">Pon — Pet</div>
+          <div class="hour-strip-time">07:00 — 23:00</div>
+        </div>
+        <div class="hours-strip-divider"></div>
+        <div class="hour-strip-item reveal-scale reveal-delay-2">
+          <div class="hour-strip-day">Subota</div>
+          <div class="hour-strip-time">08:00 — 01:00</div>
+        </div>
+        <div class="hours-strip-divider"></div>
+        <div class="hour-strip-item reveal-scale reveal-delay-3">
+          <div class="hour-strip-day">Nedjelja</div>
+          <div class="hour-strip-time">09:00 — 22:00</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="reveal-fade">
+        <div class="footer-brand-name">Kavanica</div>
+        <p class="footer-brand-tagline">U samom centru Koprivnice, od 2000.</p>
+      </div>
+      <div class="reveal reveal-delay-1">
+        <div class="footer-col-title">Navigacija</div>
+        <ul class="footer-links">
+          <li><a href="#about">O nama</a></li>
+          <li><a href="#menu">Meni</a></li>
+          <li><a href="#events">Događaji</a></li>
+          <li><a href="#gallery">Galerija</a></li>
+          <li><a href="#contact">Kontakt</a></li>
+
+        </ul>
+      </div>
+      <div class="reveal reveal-delay-2">
+        <div class="footer-col-title">Radno vrijeme</div>
+        <ul class="footer-links">
+          <li><a href="#">Pon – Pet: 07–23h</a></li>
+          <li><a href="#">Subota: 08–01h</a></li>
+          <li><a href="#">Nedjelja: 09–22h</a></li>
+        </ul>
+      </div>
+      <div class="reveal reveal-delay-3">
+        <div class="footer-col-title">Zapratite nas</div>
+        <div class="footer-social">
+          <a href="#" aria-label="Instagram">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          </a>
+          <a href="#" aria-label="Facebook">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+          <a href="#" aria-label="TikTok">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.79 1.54V6.78a4.85 4.85 0 0 1-1.02-.09z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom reveal-fade reveal-delay-2">
+      <span class="footer-copy">© 2026 Kavanica. Sva prava pridržana.</span>
+      <span class="footer-copper">Koprivnica centar</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Nav scroll
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  }, { passive: true });
+
+  // Mobile menu
+  function toggleMobile() {
+    const menu = document.getElementById('mobileMenu');
+    const ham = document.getElementById('hamburger');
+    menu.classList.toggle('open');
+    ham.classList.toggle('open');
+    document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
+  }
+  function closeMobile() {
+    const menu = document.getElementById('mobileMenu');
+    const ham = document.getElementById('hamburger');
+    menu.classList.remove('open');
+    ham.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  // Menu tabs — toggle .active off/on so CSS animation re-fires on each switch
+  function switchTab(btn, id) {
+    document.querySelectorAll('.menu-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.menu-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    const panel = document.getElementById('tab-' + id);
+    // Remove then re-add in next frame so the CSS animation restarts
+    requestAnimationFrame(() => { panel.classList.add('active'); });
+  }
+
+  // Scroll reveal — all variant classes
+  const revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale, .reveal-fade');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.07, rootMargin: '0px 0px -24px 0px' });
+
+  revealEls.forEach(el => observer.observe(el));
+
+  // Fallback for headless / print capture
+  window.addEventListener('load', () => {
+    setTimeout(() => revealEls.forEach(el => el.classList.add('visible')), 200);
+  });
+</script>
+</body>
+</html>
